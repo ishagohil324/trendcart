@@ -1,36 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { CartProvider } from './context/CartContext';
+import { ThemeProvider } from './context/ThemeContext';
+import Navbar from './components/Navbar';
+import CartDrawer from './components/CartDrawer';
+import Home from './pages/Home';
+import Products from './pages/Products';
+import Checkout from './pages/Checkout';
+import Orders from './pages/Orders';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider>
+      <CartProvider>
+        <Router>
+          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+            <Navbar />
+            <CartDrawer />
+            
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/orders" element={<Orders />} />
+            </Routes>
+          </div>
+        </Router>
+      </CartProvider>
+    </ThemeProvider>
   );
 }
 
 export default App;
-
-
-// trendcart/
-// ├── node_modules/     ← Dependencies (don't touch!)
-// ├── public/           ← Static files (images, index.html)
-// ├── src/              ← Our code goes HERE! 👈
-// │   ├── App.js        ← Main component
-// │   ├── App.css       ← Main styles
-// │   └── index.js      ← Entry point
-// ├── package.json      ← Project settings
-// └── README.md         ← Instruction
