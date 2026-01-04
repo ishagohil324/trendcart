@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const { cartCount, setIsCartOpen } = useCart();
