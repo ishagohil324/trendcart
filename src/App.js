@@ -23,3 +23,14 @@ function App() {
 }
 
 export default App;
+
+
+// trendcart/
+// ├── node_modules/     ← Dependencies (don't touch!)
+// ├── public/           ← Static files (images, index.html)
+// ├── src/              ← Our code goes HERE! 👈
+// │   ├── App.js        ← Main component
+// │   ├── App.css       ← Main styles
+// │   └── index.js      ← Entry point
+// ├── package.json      ← Project settings
+// └── README.md         ← Instruction
