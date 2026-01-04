@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 
+
+
+
 const Login = () => {
   const navigate = useNavigate();
   const { login, loginWithGoogle, signup, currentUser } = useAuth();
@@ -11,6 +14,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   
   // Form data
   const [formData, setFormData] = useState({
@@ -140,58 +144,88 @@ const Login = () => {
         <div className="flex flex-col lg:flex-row items-center justify-center gap-12">
           
           {/* Cartoon Characters with Eyes */}
-          <motion.div
-            className="hidden lg:block"
-            initial={{ x: -100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.8 }}
-          >
-            <div className="relative">
-              {/* Left Character */}
-              <motion.div
-                className="w-64 h-64 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full relative"
-                animate={{ y: [0, -20, 0] }}
-                transition={{ duration: 3, repeat: Infinity }}
-              >
-                {/* Face */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  {/* Eyes */}
-                  <div className="flex gap-8 mb-4">
-                    {/* Left Eye */}
-                    <div
-                      ref={leftEyeRef}
-                      className="w-16 h-16 bg-white rounded-full flex items-center justify-center"
-                    >
-                      <motion.div
-                        className="w-6 h-6 bg-gray-900 rounded-full"
-                        animate={{
-                          x: leftEyePos.x,
-                          y: leftEyePos.y
-                        }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                      />
-                    </div>
-                    {/* Right Eye */}
-                    <div
-                      ref={rightEyeRef}
-                      className="w-16 h-16 bg-white rounded-full flex items-center justify-center"
-                    >
-                      <motion.div
-                        className="w-6 h-6 bg-gray-900 rounded-full"
-                        animate={{
-                          x: rightEyePos.x,
-                          y: rightEyePos.y
-                        }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                      />
-                    </div>
-                  </div>
-                  {/* Smile */}
-                  <div className="w-20 h-10 border-b-4 border-white rounded-full" />
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
+ {/* Cartoon Character */}
+<motion.div
+  className="hidden lg:block"
+  initial={{ x: -100, opacity: 0 }}
+  animate={{ x: 0, opacity: 1 }}
+  transition={{ duration: 0.8 }}
+>
+  <motion.div
+    className="relative flex flex-col items-center"
+    animate={{ y: [0, -15, 0] }}
+    transition={{ duration: 3, repeat: Infinity }}
+  >
+    {/* Head */}
+    <div className="w-64 h-64 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center relative">
+
+      {/* Eyes */}
+{/* Eyes */}
+<div className="flex gap-10 absolute top-24">
+
+  {/* Left Eye */}
+  <div
+    ref={leftEyeRef}
+    className="w-14 h-14 bg-white rounded-full flex items-center justify-center overflow-hidden"
+  >
+    {!isPasswordFocused ? (
+      <motion.div
+        className="w-5 h-5 bg-gray-900 rounded-full"
+        animate={{
+          x: leftEyePos.x,
+          y: leftEyePos.y
+        }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      />
+    ) : (
+      <motion.div
+        className="w-8 h-1 bg-gray-900 rounded-full"
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+      />
+    )}
+  </div>
+
+  {/* Right Eye */}
+  <div
+    ref={rightEyeRef}
+    className="w-14 h-14 bg-white rounded-full flex items-center justify-center overflow-hidden"
+  >
+    {!isPasswordFocused ? (
+      <motion.div
+        className="w-5 h-5 bg-gray-900 rounded-full"
+        animate={{
+          x: rightEyePos.x,
+          y: rightEyePos.y
+        }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      />
+    ) : (
+      <motion.div
+        className="w-8 h-1 bg-gray-900 rounded-full"
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+      />
+    )}
+  </div>
+
+</div>
+
+
+      {/* Mouth */}
+      <motion.div
+        className="absolute bottom-16 w-20 h-10 border-b-4 border-white rounded-full"
+        animate={{
+          scaleX: isPasswordFocused ? 0.6 : 1
+        }}
+      />
+    </div>
+
+    {/* Body */}
+    <div className="w-32 h-40 bg-gradient-to-b from-purple-500 to-pink-500 rounded-b-full -mt-10" />
+  </motion.div>
+</motion.div>
+
 
           {/* Login Form */}
           <motion.div
@@ -270,15 +304,18 @@ const Login = () => {
                 {/* Password */}
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-purple-300" size={20} />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="Password"
-                    required
-                    className="w-full pl-12 pr-12 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
+<input
+  type={showPassword ? 'text' : 'password'}
+  name="password"
+  value={formData.password}
+  onChange={handleChange}
+  onFocus={() => setIsPasswordFocused(true)}
+  onBlur={() => setIsPasswordFocused(false)}
+  placeholder="Password"
+  required
+  className="w-full pl-12 pr-12 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-400"
+/>
+
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
