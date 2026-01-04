@@ -3,6 +3,7 @@ import { ShoppingCart, Moon, Sun, Search } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
 import { motion } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const { cartCount, setIsCartOpen } = useCart();
