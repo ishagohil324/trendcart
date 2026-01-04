@@ -9,6 +9,8 @@ import { useNavigate } from 'react-router-dom';
 const Navbar = () => {
   const { cartCount, setIsCartOpen } = useCart();
   const { isDark, toggleTheme } = useTheme();
+            const { currentUser } = useAuth();
+const navigate = useNavigate();
 
   return (
     <nav className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md">
@@ -41,8 +43,7 @@ const Navbar = () => {
           </div>
 
           {/* Right Icons */}
-          const { currentUser } = useAuth();
-const navigate = useNavigate();
+
 <div className="flex items-center space-x-4">
   
   {/* Theme Toggle */}
