@@ -11,6 +11,7 @@ import Checkout from './pages/Checkout';
 import Orders from './pages/Orders';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import ProductDetail from './pages/ProductDetail';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -33,6 +34,8 @@ function App() {
                 <Route path="/products" element={<Products />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                {/* <Route path="/product/:id" element={<ProductDetail />} /> */}
+                <Route path="/product/:id" element={<ProductDetail />} />
                 <Route 
                   path="/checkout" 
                   element={

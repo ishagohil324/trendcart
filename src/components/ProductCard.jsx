@@ -2,18 +2,25 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Star, Heart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
   const { addToCart } = useCart();
   const [isLiked, setIsLiked] = React.useState(false);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+    e.stopPropagation(); // Prevent navigation when clicking add to cart
     addToCart(product);
   };
 
+
+
   return (
+    
     <motion.div
-      className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden group relative"
+      onClick={() => navigate(`/product/${product.id}`)}
+      className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden group relative cursor-pointer"
       whileHover={{ y: -8, shadow: "0 20px 30px rgba(0,0,0,0.2)" }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
