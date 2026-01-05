@@ -5,6 +5,7 @@ import { ArrowLeft, Heart, ShoppingCart, Star, Plus, Minus, ZoomIn } from 'lucid
 import { products } from '../data/products';
 import { useCart } from '../context/CartContext';
 
+
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
