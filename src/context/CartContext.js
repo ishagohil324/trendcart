@@ -1,4 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase/config';
 
 const CartContext = createContext();
 
@@ -11,8 +14,47 @@ export const useCart = () => {
 };
 
 export const CartProvider = ({ children }) => {
+  const { currentUser } = useAuth();
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // Load cart from Firebase when user logs in
+  useEffect(() => {
+    if (currentUser) {
+      loadCartFromFirebase();
+    } else {
+      setCartItems([]);
+    }
+  }, [currentUser]);
+
+  // Save cart to Firebase whenever it changes
+  useEffect(() => {
+    if (currentUser && cartItems.length > 0) {
+      saveCartToFirebase();
+    }
+  }, [cartItems, currentUser]);
+
+  const loadCartFromFirebase = async () => {
+    try {
+      const cartDoc = await getDoc(doc(db, 'carts', currentUser.uid));
+      if (cartDoc.exists()) {
+        setCartItems(cartDoc.data().items || []);
+      }
+    } catch (error) {
+      console.error('Error loading cart:', error);
+    }
+  };
+
+  const saveCartToFirebase = async () => {
+    try {
+      await setDoc(doc(db, 'carts', currentUser.uid), {
+        items: cartItems,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Error saving cart:', error);
+    }
+  };
 
   const addToCart = (product) => {
     setCartItems(prev => {
@@ -45,8 +87,18 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  const clearCart = () => {
+  const clearCart = async () => {
     setCartItems([]);
+    if (currentUser) {
+      try {
+        await setDoc(doc(db, 'carts', currentUser.uid), {
+          items: [],
+          updatedAt: new Date().toISOString()
+        });
+      } catch (error) {
+        console.error('Error clearing cart:', error);
+      }
+    }
   };
 
   const cartTotal = cartItems.reduce(

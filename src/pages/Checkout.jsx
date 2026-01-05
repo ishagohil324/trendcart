@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import CheckoutForm from '../components/CheckoutForm';
 import PaymentGateway from '../components/PaymentGateway';
 import { ArrowLeft, Package } from 'lucide-react';
@@ -9,9 +10,19 @@ import { ArrowLeft, Package } from 'lucide-react';
 const Checkout = () => {
   const navigate = useNavigate();
   const { cartItems, cartTotal, clearCart } = useCart();
-  const [step, setStep] = useState(1); // 1: Form, 2: Payment
+  const { currentUser } = useAuth();
+  const [step, setStep] = useState(1);
   const [orderDetails, setOrderDetails] = useState(null);
 
+  // Check if user is logged in
+  useEffect(() => {
+    if (!currentUser) {
+      // Redirect to login with return URL
+      navigate('/login', { state: { from: '/checkout' } });
+    }
+  }, [currentUser, navigate]);
+
+  // Check if cart is empty
   if (cartItems.length === 0 && step === 1) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -31,13 +42,20 @@ const Checkout = () => {
     );
   }
 
+  // If not logged in, show nothing (will redirect)
+  if (!currentUser) {
+    return null;
+  }
+
   const handleFormSubmit = (formData) => {
     const order = {
       ...formData,
       orderId: 'TRC' + Date.now(),
       items: cartItems,
       total: cartTotal,
-      placedTime: new Date().toLocaleString()
+      placedTime: new Date().toLocaleString(),
+      userId: currentUser.uid,
+      userEmail: currentUser.email
     };
     setOrderDetails(order);
     setStep(2);
@@ -50,7 +68,7 @@ const Checkout = () => {
       status: 'placed'
     };
     
-    // Save order to localStorage (simulate backend)
+    // Save order to localStorage
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
     orders.push(finalOrder);
     localStorage.setItem('orders', JSON.stringify(orders));
@@ -142,7 +160,7 @@ const Checkout = () => {
                 Order Summary
               </h3>
               
-              <div className="space-y-3 mb-4">
+              <div className="space-y-3 mb-4 max-h-60 overflow-y-auto">
                 {cartItems.map(item => (
                   <div key={item.id} className="flex justify-between text-sm">
                     <span className="text-gray-600 dark:text-gray-400">

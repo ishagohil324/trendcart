@@ -5,6 +5,8 @@ import { useAuth } from '../context/AuthContext';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { User, Package, Heart, Settings, LogOut, Edit2, Save } from 'lucide-react';
+import { useWishlist } from '../context/WishlistContext';
+import { useCart } from '../context/CartContext';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -12,7 +14,8 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('profile');
   const [userData, setUserData] = useState(null);
   const [orders, setOrders] = useState([]);
-  const [wishlist, setWishlist] = useState([]);
+const { wishlistItems, removeFromWishlist } = useWishlist();
+const { addToCart } = useCart();
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     displayName: '',
@@ -281,21 +284,70 @@ const Dashboard = () => {
               )}
 
               {/* Wishlist Tab */}
-              {activeTab === 'wishlist' && (
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">My Wishlist</h2>
-                  <div className="text-center py-12">
-                    <Heart size={64} className="text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                    <p className="text-gray-500 dark:text-gray-400">Your wishlist is empty</p>
-                    <button
-                      onClick={() => navigate('/products')}
-                      className="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700"
-                    >
-                      Browse Products
-                    </button>
-                  </div>
-                </div>
-              )}
+    {activeTab === 'wishlist' && (
+  <div>
+    <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">My Wishlist</h2>
+    {wishlistItems.length === 0 ? (
+      <div className="text-center py-12">
+        <Heart size={64} className="text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+        <p className="text-gray-500 dark:text-gray-400">Your wishlist is empty</p>
+        <button
+          onClick={() => navigate('/products')}
+          className="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700"
+        >
+          Browse Products
+        </button>
+      </div>
+    ) : (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {wishlistItems.map((item) => (
+          <motion.div
+            key={item.id}
+            className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 flex gap-4"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            <img
+              src={item.image}
+              alt={item.name}
+              className="w-24 h-24 object-cover rounded-lg cursor-pointer"
+              onClick={() => navigate(`/product/${item.id}`)}
+            />
+            <div className="flex-1">
+              <h3 
+                className="font-bold text-gray-800 dark:text-white mb-1 cursor-pointer hover:text-purple-600"
+                onClick={() => navigate(`/product/${item.id}`)}
+              >
+                {item.name}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                {item.category}
+              </p>
+              <p className="text-lg font-bold text-purple-600">₹{item.price}</p>
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={() => {
+                    addToCart(item);
+                    navigate('/');
+                  }}
+                  className="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700"
+                >
+                  Add to Cart
+                </button>
+                <button
+                  onClick={() => removeFromWishlist(item.id)}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    )}
+  </div>
+)}
 
               {/* Settings Tab */}
               {activeTab === 'settings' && (

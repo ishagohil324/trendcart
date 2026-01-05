@@ -1,23 +1,28 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Star, Heart } from 'lucide-react';
-import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  const [isLiked, setIsLiked] = React.useState(false);
+  const { addToWishlist, isInWishlist } = useWishlist();
+  
+  const isLiked = isInWishlist(product.id);
 
   const handleAddToCart = (e) => {
-    e.stopPropagation(); // Prevent navigation when clicking add to cart
+    e.stopPropagation();
     addToCart(product);
   };
 
-
+  const handleWishlistToggle = (e) => {
+    e.stopPropagation();
+    addToWishlist(product);
+  };
 
   return (
-    
     <motion.div
       onClick={() => navigate(`/product/${product.id}`)}
       className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden group relative cursor-pointer"
@@ -28,7 +33,7 @@ const ProductCard = ({ product }) => {
     >
       {/* Like Button */}
       <button
-        onClick={() => setIsLiked(!isLiked)}
+        onClick={handleWishlistToggle}
         className="absolute top-4 right-4 z-10 p-2 bg-white dark:bg-gray-700 rounded-full shadow-md hover:scale-110 transition-transform"
       >
         <Heart
