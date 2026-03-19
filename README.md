@@ -28,14 +28,7 @@ Payments: Razorpay
 
 Other: React Router, Context API, Framer Motion
 
-🔗 Links
 
-🌐 Live Demo: https://your-live-link.com
-
-💻 GitHub: https://github.com/your-username/trendcart
-
-⚙️ Setup
-git clone https://github.com/your-username/trendcart.git
 cd trendcart
 npm install
 npm start
